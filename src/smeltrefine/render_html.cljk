@@ -7,7 +7,7 @@
   -> `smeltrefine.advisor` -> `smeltrefine.governor` ->
   `smeltrefine.phase` -> `smeltrefine.registry` -> `smeltrefine.store`
   -- through a scenario adapted from this repo's own `smeltrefine.sim`
-  driver (`clojure -M:dev:run`, run BEFORE this file was written to
+  driver (`kbb -M:dev:run`, run BEFORE this file was written to
   confirm it produces a sensible ledger against the real seeded ids
   `batch-001`..`batch-003` / `furnace-001` / `refine-002` -- this
   repo's sim driver does use ids that match `smeltrefine.store`'s own
@@ -27,7 +27,7 @@
   page content -- two consecutive runs against the same seed are
   byte-identical (verify by diffing them).
 
-  Usage: `clojure -M:dev:render-html [out-file]`
+  Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [clojure.java.io :as io]
             [kotoba.lang.text :as str]
@@ -302,7 +302,7 @@
 
      "  <section class=\"card\">\n"
      "    <h2>Production batches</h2>\n"
-     "    <p class=\"muted\">Live SSoT after this run — build-time-generated from <code>smeltrefine.store</code> through the real actor graph by <code>smeltrefine.render-html</code> (<code>clojure -M:dev:render-html</code>). Shipped-to-date moves only when a shipment actually commits.</p>\n"
+     "    <p class=\"muted\">Live SSoT after this run — build-time-generated from <code>smeltrefine.store</code> through the real actor graph by <code>smeltrefine.render-html</code> (<code>kbb -M:dev:render-html</code>). Shipped-to-date moves only when a shipment actually commits.</p>\n"
      "    <table>\n"
      "      <thead><tr><th>Batch</th><th>Material</th><th>Purity grade</th><th>Output form</th><th>Produced kg</th><th>Shipped kg</th><th>Impurity %</th><th>Assay-verified</th><th>Registered</th><th>Last assessed</th><th>Last op on this batch</th></tr></thead>\n"
      "      <tbody>\n"
