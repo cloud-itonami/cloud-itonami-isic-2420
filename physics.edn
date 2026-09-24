@@ -1,0 +1,45 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; The README has no "Robotics premise" section; its Scope names the plant
+;; this actor coordinates (ISIC 2420): primary smelting-refining of gold,
+;; silver, copper and aluminium -- smelting furnace, converting, fire and
+;; electrolytic refining. The physical work of that plant taken here:
+;; cooling cast copper anodes on the casting wheel until they can be lifted
+;; out, stripping cathode sheets from the electrorefining tank house, and
+;; moving a ladle of molten matte from the furnace to the converter aisle.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-2420"
+ :cases
+ [{:id :anode-wheel-cooling
+   :kind :thermal
+   :procedure "copper anode (45 mm, half thickness 22.5 mm, mould side adiabatic) cast at 1150 C cools under the water sprays of the casting wheel until its mould-side face falls below 250 C for take-off; sweep = spray intensity"
+   :params {:thickness-m 0.0225 :conductivity-w-mk 350.0 :density-kg-m3 8900.0 :specific-heat-j-kgk 385.0
+            :t0-c 1150.0 :t-hot-c 30.0 :h-back-w-m2k 0.0
+            :threshold-c 250.0 :threshold-direction :falling :duration-s 1800.0 :nodes 7}
+   :sweep {:param :h-front-w-m2k :values [300.0 600.0 1000.0 2000.0 3000.0]}
+   :quantity :time-to-threshold-s
+   :limit {:max 300.0 :basis "estimate: an anode has about 5 minutes between casting and the take-off station at the wheel's indexing rate"}
+   :boundary {:lo 100.0 :hi 5000.0}}
+  {:id :cathode-stripping
+   :kind :manipulator
+   :procedure "stripping arm lifts a harvested copper cathode sheet off the stainless blank onto the bundling conveyor"
+   :params {:l1-m 0.90 :l2-m 0.80 :m1-kg 25.0 :m2-kg 18.0
+            :from [1.10 0.40] :to [0.60 1.20] :duration-s 3.0 :steps 500}
+   :sweep {:param :payload-kg :values [30.0 45.0 60.0 75.0 90.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 1500.0 :basis "estimate: continuous shoulder torque of a ~100 kg-payload industrial arm class"}
+   :boundary {:lo 5.0 :hi 250.0}}
+  {:id :matte-ladle-transfer
+   :kind :transport
+   :procedure "ladle carrier moves a ladle of molten matte from the smelting furnace tap hole to the converter aisle; sweep = braking deceleration"
+   :params {:mass-kg 12000.0 :payload-kg 15000.0 :distance-m 60.0 :v-max-mps 1.0 :a-max-mps2 0.2
+            :drive-force-n 30000.0 :crr 0.02
+            :cog-height-m 0.8 :payload-cog-height-m 2.2 :support-half-length-m 1.5 :max-time-s 3600.0}
+   :sweep {:param :brake-decel-mps2 :values [0.3 0.6 1.0 1.5 2.0]}
+   :quantity :min-tipover-margin
+   :limit {:min 0.5 :basis "estimate: half the restoring moment kept in reserve with a liquid load that surges forward when the carrier brakes"}
+   :boundary {:lo 0.1 :hi 5.0}}]}
